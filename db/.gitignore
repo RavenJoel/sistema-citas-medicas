@@ -1,0 +1,4 @@
+# Los archivos de datos (doctores, pacientes, citas, administradores)
+# no se suben al repositorio. El programa los regenera si no existen.
+*
+!.gitignore

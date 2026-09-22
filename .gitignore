@@ -1,0 +1,17 @@
+# Bytecode de Java
+*.class
+
+# Archivos temporales de Vim
+*.swp
+*.swo
+
+# Archivos de proyecto de los IDE
+.vscode/
+.idea/
+*.iml
+bin/
+out/
+target/
+
+# Sistema operativo (macOS)
+.DS_Store
