@@ -1,5 +1,6 @@
 package citasmedicas;
 
+import citasmedicas.modelo.Cita;
 import citasmedicas.modelo.DatoInvalidoException;
 import citasmedicas.modelo.Doctor;
 import citasmedicas.modelo.Paciente;
@@ -7,6 +8,7 @@ import citasmedicas.persistencia.CitaRepositorio;
 import citasmedicas.persistencia.DoctorRepositorio;
 import citasmedicas.persistencia.PacienteRepositorio;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 /**
@@ -51,7 +53,7 @@ public class Consultorio {
                         altaPaciente();
                         break;
                     case "3":
-                        System.out.println("Opción en desarrollo.");
+                        crearCita();
                         break;
                     case "4":
                         System.out.println("Hasta luego.");
@@ -123,5 +125,73 @@ public class Consultorio {
 
         pacientes.agregar(paciente);
         System.out.println("Paciente registrado con éxito: " + paciente.mostrarInfo());
+    }
+
+    private void crearCita() throws IOException, DatoInvalidoException {
+        System.out.println();
+        System.out.println("--- Crear cita ---");
+        if (doctores.listar().isEmpty() || pacientes.listar().isEmpty()) {
+            System.out.println("Primero registre doctores y pacientes.");
+            return;
+        }
+
+        String id;
+        do {
+            System.out.print("ID de la cita (ej. C001): ");
+            id = entrada.nextLine().trim();
+            if (id.isEmpty() || citas.existe(id)) {
+                System.out.println("ID no válido: está vacío o ya está registrado.");
+            }
+        } while (id.isEmpty() || citas.existe(id));
+
+        LocalDateTime fechaHora = null;
+        while (fechaHora == null) {
+            System.out.print("Fecha y hora (dd/MM/aaaa HH:mm): ");
+            try {
+                fechaHora = Cita.convertirFecha(entrada.nextLine());
+            } catch (DatoInvalidoException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        String motivo;
+        do {
+            System.out.print("Motivo de la cita: ");
+            motivo = entrada.nextLine().trim();
+            if (motivo.isEmpty() || motivo.contains(",")) {
+                System.out.println("El motivo no puede estar vacío ni llevar comas.");
+            }
+        } while (motivo.isEmpty() || motivo.contains(","));
+
+        // Se muestran los registros para que el usuario vea qué ID escribir (polimorfismo con mostrarInfo).
+        System.out.println("Doctores registrados:");
+        for (Doctor d : doctores.listar()) {
+            System.out.println("  " + d.mostrarInfo());
+        }
+        Doctor doctor;
+        do {
+            System.out.print("ID del doctor: ");
+            doctor = doctores.buscarPorId(entrada.nextLine());
+            if (doctor == null) {
+                System.out.println("Doctor no encontrado.");
+            }
+        } while (doctor == null);
+
+        System.out.println("Pacientes registrados:");
+        for (Paciente p : pacientes.listar()) {
+            System.out.println("  " + p.mostrarInfo());
+        }
+        Paciente paciente;
+        do {
+            System.out.print("ID del paciente: ");
+            paciente = pacientes.buscarPorId(entrada.nextLine());
+            if (paciente == null) {
+                System.out.println("Paciente no encontrado.");
+            }
+        } while (paciente == null);
+
+        Cita cita = new Cita(id, fechaHora, motivo, doctor, paciente);
+        citas.agregar(cita);
+        System.out.println("Cita creada con éxito: " + cita.mostrarInfo());
     }
 }
