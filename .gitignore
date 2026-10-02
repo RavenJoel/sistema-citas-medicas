@@ -15,3 +15,6 @@ target/
 
 # Sistema operativo (macOS)
 .DS_Store
+
+# JAR generado
+*.jar
