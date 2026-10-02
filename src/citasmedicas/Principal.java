@@ -13,9 +13,15 @@ public class Principal {
         System.out.println("===== SISTEMA DE CITAS MÉDICAS =====");
         Scanner entrada = new Scanner(System.in);
         try {
-            // Al crearse, verifica la carpeta db, regenera los archivos que falten y carga los datos.
+            // Al crearse, ambos verifican la carpeta db, regeneran los archivos que falten y cargan los datos.
+            ControlAcceso acceso = new ControlAcceso();
             Consultorio consultorio = new Consultorio(entrada);
-            consultorio.mostrarMenu();
+
+            if (acceso.iniciarSesion(entrada)) {
+                consultorio.mostrarMenu();
+            } else {
+                System.out.println("Se agotaron los intentos. Fin del programa.");
+            }
         } catch (IOException e) {
             System.out.println("No se pudieron preparar los archivos de datos: " + e.getMessage());
         } catch (NoSuchElementException e) {
