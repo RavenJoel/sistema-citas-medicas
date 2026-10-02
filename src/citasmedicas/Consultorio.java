@@ -2,6 +2,7 @@ package citasmedicas;
 
 import citasmedicas.modelo.DatoInvalidoException;
 import citasmedicas.modelo.Doctor;
+import citasmedicas.modelo.Paciente;
 import citasmedicas.persistencia.CitaRepositorio;
 import citasmedicas.persistencia.DoctorRepositorio;
 import citasmedicas.persistencia.PacienteRepositorio;
@@ -47,7 +48,7 @@ public class Consultorio {
                         altaDoctor();
                         break;
                     case "2":
-                        System.out.println("Opción en desarrollo.");
+                        altaPaciente();
                         break;
                     case "3":
                         System.out.println("Opción en desarrollo.");
@@ -95,5 +96,32 @@ public class Consultorio {
 
         doctores.agregar(doctor);
         System.out.println("Doctor registrado con éxito: " + doctor.mostrarInfo());
+    }
+
+    private void altaPaciente() throws IOException, DatoInvalidoException {
+        System.out.println();
+        System.out.println("--- Alta de paciente ---");
+        String id;
+        do {
+            System.out.print("ID del paciente (ej. P001): ");
+            id = entrada.nextLine().trim();
+            if (id.isEmpty() || pacientes.existe(id)) {
+                System.out.println("ID no válido: está vacío o ya está registrado.");
+            }
+        } while (id.isEmpty() || pacientes.existe(id));
+
+        Paciente paciente = null;
+        while (paciente == null) {
+            System.out.print("Nombre completo: ");
+            String nombre = entrada.nextLine();
+            try {
+                paciente = new Paciente(id, nombre);
+            } catch (DatoInvalidoException e) {
+                System.out.println("Datos incompletos: " + e.getMessage());
+            }
+        }
+
+        pacientes.agregar(paciente);
+        System.out.println("Paciente registrado con éxito: " + paciente.mostrarInfo());
     }
 }
